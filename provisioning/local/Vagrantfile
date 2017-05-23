@@ -1,6 +1,49 @@
+require 'ostruct'
+
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
-$subnet = '172.17.8'
+$subnet = '172.168.10'
+$etcd_instances = 1
+$k8s_master_instances = 1
+$k8s_worker_instances = 1
+$initial_ip_suffix = 101
+
+# @return [Array]
+def server_configurations
+  available_ips = ($etcd_instances + $k8s_master_instances + $k8s_worker_instances)
+                     .times
+                     .map { |index| "#{$subnet}.#{$initial_ip_suffix+index}" }
+  [].concat(
+    build_servers(prefix: 'local-etcd-server',
+                  instances: $etcd_instances,
+                  available_ips: available_ips,
+                  tags: ['etcd'])
+  ).concat(
+    build_servers(prefix: 'local-k8s-master-server',
+                  instances: $k8s_master_instances,
+                  available_ips: available_ips,
+                  tags: ['kube-master'])
+  ).concat(
+    build_servers(prefix: 'local-k8s-worker-server',
+                  instances: $k8s_worker_instances,
+                  available_ips: available_ips,
+                  tags: ['kube-node'])
+  )
+end
+
+# @return [Array]
+def build_servers(prefix:, instances:, available_ips:, tags:)
+  instances.times.map { |instance_number| OpenStruct.new(
+    name: "#{prefix}-#{instance_number.next}",
+    ip: available_ips.delete_at(0),
+    tags: tags
+  ) }
+end
+
+def server_names_by_tag(tag)
+  server_configurations.select { |server| server.tags.include?(tag) }.map(&:name)
+end
+
 # All Vagrant configuration is done below. The "2" in Vagrant.configure
 # configures the configuration version (we support older styles for
 # backwards compatibility). Please don't change it unless you know what
@@ -20,36 +63,22 @@ Vagrant.configure('2') do |config|
     config.vbguest.auto_update = false
   end
 
-  config.vm.define vm_name = 'local-etcd-server-1' do |config|
-    config.vm.hostname = vm_name
-    config.vm.network :private_network, ip: "#{$subnet}.101"
-  end
-  config.vm.define vm_name = 'local-k8s-master-server-1' do |config|
-    config.vm.hostname = vm_name
-    config.vm.network :private_network, ip: "#{$subnet}.102"
-  end
-  config.vm.define vm_name = 'local-k8s-worker-server-1' do |config|
-    config.vm.hostname = vm_name
-    config.vm.network :private_network, ip: "#{$subnet}.103"
+  ansible_host_vars = {}
+  server_configurations.each do |server|
+    config.vm.define server.name do |config|
+      config.vm.hostname = server.name
+      config.vm.network :private_network, ip: server.ip
+      ansible_host_vars[server.name] = { 'ip' => server.ip }
+    end
   end
 
   config.vm.provision 'ansible' do |ansible|
     ansible.playbook = 'noop-playbook.yml'
-    ansible.host_vars = {
-      'local-etcd-server-1' => {
-        'ip' => "#{$subnet}.101"
-      },
-      'local-k8s-master-server-1' => {
-        'ip' => "#{$subnet}.102"
-      },
-      'local-k8s-worker-server-1' => {
-        'ip' => "#{$subnet}.103"
-      }
-    }
+    ansible.host_vars = ansible_host_vars
     ansible.groups = {
-      'etcd' => ['local-etcd-server-1'],
-      'kube-master' => ['local-k8s-master-server-1'],
-      'kube-node' => ['local-k8s-worker-server-1'],
+      'etcd' => server_names_by_tag('etcd'),
+      'kube-master' => server_names_by_tag('kube-master'),
+      'kube-node' => server_names_by_tag('kube-node'),
       'k8s-cluster:children' => ['kube-master', 'kube-node'],
     }
   end
@@ -64,10 +93,6 @@ Vagrant.configure('2') do |config|
   # accessing "localhost:8080" will access port 80 on the guest machine.
   # config.vm.network "forwarded_port", guest: 80, host: 8080
 
-  # Create a private network, which allows host-only access to the machine
-  # using a specific IP.
-  # config.vm.network "private_network", ip: "192.168.33.10"
-
   # Create a public network, which generally matched to bridged network.
   # Bridged networks make the machine appear as another physical device on
   # your network.
@@ -79,10 +104,6 @@ Vagrant.configure('2') do |config|
   # argument is a set of non-required options.
   # config.vm.synced_folder "../data", "/vagrant_data"
 
-  # Provider-specific configuration so you can fine-tune various
-  # backing providers for Vagrant. These expose provider-specific options.
-  # Example for VirtualBox:
-  #
   config.vm.provider 'virtualbox' do |vb|
     # Display the VirtualBox GUI when booting the machine
     vb.gui = false
@@ -92,16 +113,6 @@ Vagrant.configure('2') do |config|
     vb.cpus = '1'
     vb.linked_clone = true
   end
-  #
-  # View the documentation for the provider you are using for more
-  # information on available options.
-
-  # Define a Vagrant Push strategy for pushing to Atlas. Other push strategies
-  # such as FTP and Heroku are also available. See the documentation at
-  # https://docs.vagrantup.com/v2/push/atlas.html for more information.
-  # config.push.define "atlas" do |push|
-  #   push.app = "YOUR_ATLAS_USERNAME/YOUR_APPLICATION_NAME"
-  # end
 
   # Enable provisioning with a shell script. Additional provisioners such as
   # Puppet, Chef, Ansible, Salt, and Docker are also available. Please see the
