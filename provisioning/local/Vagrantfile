@@ -48,8 +48,8 @@ Vagrant.configure('2') do |config|
     }
     ansible.groups = {
       'etcd' => ['local-etcd-server-1'],
-      'kube-master' => ['local-kube-master-server-1'],
-      'kube-node' => ['local-kube-worker-server-1'],
+      'kube-master' => ['local-k8s-master-server-1'],
+      'kube-node' => ['local-k8s-worker-server-1'],
       'k8s-cluster:children' => ['kube-master', 'kube-node'],
     }
   end
