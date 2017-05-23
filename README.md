@@ -11,7 +11,7 @@ vagrant up --parallel
 vagrant status
 
 cd configuration
-ansible-playbook -i ../provisioning/local/.vagrant/provisioners/ansible/inventory/vagrant_ansible_inventory cluster.yml -b -v
+ansible-playbook -i ../provisioning/local/.vagrant/provisioners/ansible/inventory/vagrant_ansible_inventory cluster.yml -b --flush-cache -v
 ```
 
 # Kargo playbooks version
