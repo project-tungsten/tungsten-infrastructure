@@ -65,8 +65,7 @@
     - {name: dnsmasq, file: dnsmasq-svc.yml, type: svc}
     - {name: dnsmasq-autoscaler, file: dnsmasq-autoscaler.yml, type: deployment}
   register: manifests
-  delegate_to: "{{ groups['kube-master'][0] }}"
-  run_once: true
+  when: inventory_hostname == groups['kube-master'][0]
 
 - name: Start Resources
   kube:
@@ -77,8 +76,7 @@
     filename: "{{kube_config_dir}}/{{item.item.file}}"
     state: "{{item.changed | ternary('latest','present') }}"
   with_items: "{{ manifests.results }}"
-  delegate_to: "{{ groups['kube-master'][0] }}"
-  run_once: true
+  when: inventory_hostname == groups['kube-master'][0]
 
 - name: Check for dnsmasq port (pulling image and running container)
   wait_for:

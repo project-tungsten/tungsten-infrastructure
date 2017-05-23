@@ -1,3 +1,12 @@
+# Valid bootstrap options (required): ubuntu, coreos, centos, none
+bootstrap_os: ubuntu
+
+#Directory where etcd data stored
+etcd_data_dir: /var/lib/etcd
+
+# Directory where the binaries will be installed
+bin_dir: /usr/local/bin
+
 # Kubernetes configuration dirs and system namespace.
 # Those are where all the additional config stuff goes
 # the kubernetes normally puts in /srv/kubernets.
@@ -23,7 +32,7 @@ kube_users_dir: "{{ kube_config_dir }}/users"
 kube_api_anonymous_auth: false
 
 ## Change this to use another Kubernetes version, e.g. a current beta release
-kube_version: v1.6.1
+kube_version: v1.5.3
 
 # Where the binaries will be downloaded.
 # Note: ensure that you've enough disk space (about 1G)
@@ -39,7 +48,7 @@ kube_cert_group: kube-cert
 kube_log_level: 2
 
 # Users to create for basic auth in Kubernetes API via HTTP
-kube_api_pwd: "changeme"
+kube_api_pwd: "admin"
 kube_users:
   kube:
     pass: "{{kube_api_pwd}}"
@@ -98,7 +107,7 @@ cluster_name: cluster.local
 # Subdomains of DNS domain to be resolved via /etc/resolv.conf for hostnet pods
 ndots: 2
 # Can be dnsmasq_kubedns, kubedns or none
-dns_mode: kubedns
+dns_mode: dnsmasq_kubedns
 # Can be docker_dns, host_resolvconf or none
 resolvconf_mode: docker_dns
 # Deploy netchecker app to verify DNS resolve as an HTTP service

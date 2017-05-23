@@ -1,6 +1,3 @@
-# Valid options: docker (default), rkt, or host
-kubelet_deployment_type: docker
-
 # change to 0.0.0.0 to enable insecure access from anywhere (not recommended)
 kube_apiserver_insecure_bind_address: 127.0.0.1
 
@@ -12,14 +9,6 @@ kube_proxy_mode: iptables
 # If using the pure iptables proxy, SNAT everything. Note that it breaks any
 # policy engine.
 kube_proxy_masquerade_all: false
-
-# These options reflect limitations of running kubelet in a container.
-# Modify at your own risk
-kubelet_enable_cri: false
-kubelet_cgroups_per_qos: false
-# Set to empty to avoid cgroup creation
-kubelet_enforce_node_allocatable: ""
-
 
 # Limits for kube components and nginx load balancer app
 kubelet_memory_limit: 512M
@@ -48,6 +37,3 @@ etcd_config_dir: /etc/ssl/etcd
 kube_apiserver_node_port_range: "30000-32767"
 
 kubelet_load_modules: false
-
-##Support custom flags to be passed to kubelet
-kubelet_custom_flags: []

@@ -8,7 +8,7 @@ metadata:
 spec:
   hostNetwork: true
 {% if kube_version | version_compare('v1.6', '>=') %}
-  dnsPolicy: ClusterFirst
+  dnsPolicy: ClusterFirstWithHostNet
 {% endif %}
   containers:
   - name: kube-scheduler
@@ -27,13 +27,6 @@ spec:
     - --leader-elect=true
     - --master={{ kube_apiserver_endpoint }}
     - --v={{ kube_log_level }}
-{% if scheduler_custom_flags is string %}
-    - {{ scheduler_custom_flags }}
-{% else %}
-{%   for flag in scheduler_custom_flags %}
-    - {{ flag }}
-{%   endfor %}
-{% endif %}
     livenessProbe:
       httpGet:
         host: 127.0.0.1

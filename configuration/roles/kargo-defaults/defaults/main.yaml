@@ -4,7 +4,7 @@ bootstrap_os: none
 kube_api_anonymous_auth: false
 
 ## Change this to use another Kubernetes version, e.g. a current beta release
-kube_version: v1.6.1
+kube_version: v1.5.3
 
 # Directory where the binaries will be installed
 bin_dir: /usr/local/bin
@@ -41,6 +41,9 @@ kube_config_dir: /etc/kubernetes
 kube_script_dir: "{{ bin_dir }}/kubernetes-scripts"
 kube_manifest_dir: "{{ kube_config_dir }}/manifests"
 system_namespace: kube-system
+
+# Logging directory (sysvinit systems)
+kube_log_dir: "/var/log/kubernetes"
 
 # This is where all the cert scripts and certs will be located
 kube_cert_dir: "{{ kube_config_dir }}/ssl"
@@ -94,15 +97,11 @@ kube_apiserver_insecure_port: 8080 # (http)
 # Path used to store Docker data
 docker_daemon_graph: "/var/lib/docker"
 
-# Docker log options
-# Rotate container stderr/stdout logs at 50m and keep last 5
-docker_log_opts: "--log-opt max-size=50m --log-opt max-file=5"
-
 ## A string of extra options to pass to the docker daemon.
 ## This string should be exactly as you wish it to appear.
 ## An obvious use case is allowing insecure-registry access
 ## to self hosted registries like so:
-docker_options: "--insecure-registry={{ kube_service_addresses }} --graph={{ docker_daemon_graph }} {{ docker_log_opts }}"
+docker_options: "--insecure-registry={{ kube_service_addresses }} --graph={{ docker_daemon_graph }}"
 
 # Settings for containerized control plane (etcd/kubelet/secrets)
 etcd_deployment_type: docker
