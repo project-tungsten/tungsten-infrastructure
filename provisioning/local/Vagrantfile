@@ -1,6 +1,6 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
-
+$subnet = '172.17.8'
 # All Vagrant configuration is done below. The "2" in Vagrant.configure
 # configures the configuration version (we support older styles for
 # backwards compatibility). Please don't change it unless you know what
@@ -10,21 +10,47 @@ Vagrant.configure('2') do |config|
   # For a complete reference, please see the online documentation at
   # https://docs.vagrantup.com.
 
+  config.ssh.insert_key = false
   # Every Vagrant development environment requires a box. You can search for
   # boxes at https://atlas.hashicorp.com/search.
   config.vm.box = 'centos/7'
 
-  config.vm.define 'local-etcd-server-1'
-  config.vm.define 'local-kube-master-server-1'
-  config.vm.define 'local-kube-worker-server-1'
+  # plugin conflict
+  if Vagrant.has_plugin?("vagrant-vbguest") then
+    config.vbguest.auto_update = false
+  end
+
+  config.vm.define vm_name = 'local-etcd-server-1' do |config|
+    config.vm.hostname = vm_name
+    config.vm.network :private_network, ip: "#{$subnet}.101"
+  end
+  config.vm.define vm_name = 'local-k8s-master-server-1' do |config|
+    config.vm.hostname = vm_name
+    config.vm.network :private_network, ip: "#{$subnet}.102"
+  end
+  config.vm.define vm_name = 'local-k8s-worker-server-1' do |config|
+    config.vm.hostname = vm_name
+    config.vm.network :private_network, ip: "#{$subnet}.103"
+  end
 
   config.vm.provision 'ansible' do |ansible|
     ansible.playbook = 'noop-playbook.yml'
+    ansible.host_vars = {
+      'local-etcd-server-1' => {
+        'ip' => "#{$subnet}.101"
+      },
+      'local-k8s-master-server-1' => {
+        'ip' => "#{$subnet}.102"
+      },
+      'local-k8s-worker-server-1' => {
+        'ip' => "#{$subnet}.103"
+      }
+    }
     ansible.groups = {
       'etcd' => ['local-etcd-server-1'],
       'kube-master' => ['local-kube-master-server-1'],
       'kube-node' => ['local-kube-worker-server-1'],
-      'k8s-cluster' => ['local-kube-master-server-1', 'local-kube-worker-server-1']
+      'k8s-cluster:children' => ['kube-master', 'kube-node'],
     }
   end
 
