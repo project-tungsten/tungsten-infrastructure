@@ -70,7 +70,8 @@ Vagrant.configure('2') do |config|
       config.vm.hostname = server.name
       config.vm.network :private_network, ip: server.ip
       ansible_host_vars[server.name] = {
-        'ip' => server.ip
+        'ip' => server.ip,
+        'bootstrap_os' => 'ubuntu'
       }
     end
   end

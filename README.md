@@ -9,9 +9,11 @@ ansible >= 2.3
 cd provisioning/local
 vagrant up --parallel
 vagrant status
+```
 
-cd configuration
-ansible-playbook -i ../provisioning/local/.vagrant/provisioners/ansible/inventory/vagrant_ansible_inventory cluster.yml -b --flush-cache -v
+```bash
+cd configuration/kargo
+ansible-playbook -i ../../provisioning/local/.vagrant/provisioners/ansible/inventory/vagrant_ansible_inventory cluster.yml -b --flush-cache -v
 ```
 
 # Kargo playbooks version
