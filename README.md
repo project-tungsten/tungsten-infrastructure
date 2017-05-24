@@ -25,11 +25,6 @@ cd configuration/kargo
 ansible-playbook -i ../../provisioning/local/.vagrant/provisioners/ansible/inventory/vagrant_ansible_inventory cluster.yml -b --flush-cache -v
 ```
 
-# Kargo playbooks version
-
-05/19/2017
-sha: 9e6426786759f35563f663fd18942889f6de3a6c
-
 # Links
 
 https://www.vagrantup.com/docs/provisioning/ansible_intro.html
