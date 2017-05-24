@@ -3,6 +3,12 @@
 vagrant >= 1.8.0
 ansible >= 2.3
 
+# Setup
+
+```bash
+git submodule update --init --recursive
+```
+
 # Run local cluster
 
 ```bash
