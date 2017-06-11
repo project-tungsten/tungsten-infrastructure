@@ -1,0 +1,20 @@
+---
+
+#- include: ../kargo/cluster.yml
+
+- hosts: kube-node
+  any_errors_fatal: "{{ any_errors_fatal | default(true) }}"
+  roles:
+    - { role: glusterfs-client }
+
+- hosts: all
+  any_errors_fatal: "{{ any_errors_fatal | default(true) }}"
+  roles:
+    - { role: glusterfs }
+
+
+- hosts: kube-master
+  any_errors_fatal: "{{ any_errors_fatal | default(true) }}"
+  roles:
+    - { role: glusterfs-kubernetes-cluster }
+

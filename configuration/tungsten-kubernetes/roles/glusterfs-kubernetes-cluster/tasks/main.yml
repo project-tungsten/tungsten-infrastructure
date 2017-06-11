@@ -1,0 +1,27 @@
+---
+
+
+- include_role:
+    name: heketi-cli
+
+- package:
+    name: ruby
+    state: present
+
+#- synchronize:
+#    src: "kube-templates"
+#    dest: ~/glusterfs-kubernetes-cluster-files
+#
+#- synchronize:
+#    src: "install.rb"
+#    dest: ~/glusterfs-kubernetes-cluster-files
+#
+#- synchronize:
+#    src: "../../../../glusterfs-kubernetes"
+#    dest: ~/glusterfs-kubernetes-cluster-files
+
+#- shell: "ruby ~/glusterfs-kubernetes-cluster-files/install.rb"
+#
+#- file:
+#    path: ~/glusterfs-kubernetes-cluster-files
+#    state: absent

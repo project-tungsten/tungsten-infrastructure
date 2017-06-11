@@ -18,37 +18,31 @@ servers = ServersList.new(
   subnet: $subnet,
   servers: [
     {
-      prefix: 'local-etcd-server',
-      instances: $etcd_instances,
-      tags: ['etcd'],
+      prefix: 'mini-local-master-server',
+      instances: 1,
+      tags: ['etcd', 'kube-master', 'kube-node'],
       settings: {
-        memory: 512,
-        cpus: 1
-      }
-    },
-    {
-      prefix: 'local-k8s-master-server',
-      instances: $k8s_master_instances,
-      tags: ['kube-master'],
-      settings: { memory: 1536, cpus: 1 }
-    },
-    {
-      prefix: 'local-k8s-worker-server',
-      instances: $k8s_worker_instances,
-      tags: ['kube-node'],
-      settings: { memory: 1536, cpus: 2 }
-    },
-    {
-      prefix: 'local-k8s-worker-storage-server',
-      instances: $k8s_worker_storage_instances,
-      tags: ['kube-node'],
-      settings: {
-        memory: 1536,
+        memory: 2048,
         cpus: 2,
         volumes: [
           {
             name: 'gfs',
-            size_in_gb: 20
+            size_in_gb: 15
+          }
+        ]
+      }
+    },
+    {
+      prefix: 'mini-local-worker-server',
+      instances: 1,
+      tags: ['etcd', 'kube-node'],
+      settings: {
+        memory: 2048,
+        cpus: 2,
+        volumes: [
+          {
+            name: 'gfs',
+            size_in_gb: 15
           }
         ]
       }
@@ -61,7 +55,6 @@ servers = ServersList.new(
 # backwards compatibility). Please don't change it unless you know what
 # you're doing.
 Vagrant.configure('2') do |config|
-
   config.ssh.insert_key = false
   config.vm.box = $box
 
@@ -73,6 +66,5 @@ Vagrant.configure('2') do |config|
   servers.all.each do |server|
     VagrantServerConfigurationDecider.new(server: server).decide(vagrant_context: config)
   end
-
   AnsibleServersConfigurationDecider.new(servers: servers).decide(vagrant_context: config)
 end

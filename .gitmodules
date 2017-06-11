@@ -1,3 +1,6 @@
 [submodule "configuration/kargo"]
 	path = configuration/kargo
 	url = https://github.com/kubernetes-incubator/kargo.git
+[submodule "configuration/glusterfs-kubernetes"]
+	path = configuration/glusterfs-kubernetes
+	url = https://github.com/gluster/gluster-kubernetes.git

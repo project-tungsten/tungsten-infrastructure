@@ -1,0 +1,9 @@
+---
+
+- package:
+    name: "glusterfs-{{version}}"
+    state: latest
+
+- package:
+    name: "glusterfs-fuse-{{version}}"
+    state: latest

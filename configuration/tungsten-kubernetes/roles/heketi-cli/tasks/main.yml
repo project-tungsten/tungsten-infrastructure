@@ -1,0 +1,22 @@
+---
+
+- file:
+    path: "/tmp/heketi-client"
+    state: absent
+
+- name: install heketi-cli
+  unarchive:
+    src: "{{download_url}}"
+    dest: /tmp
+    remote_src: True
+
+
+- copy:
+    src: /tmp/heketi-client/bin/heketi-cli
+    dest: /usr/bin/
+    remote_src: True
+    mode: "u=x,g=x"
+
+- file:
+    path: "/tmp/heketi-client"
+    state: absent
