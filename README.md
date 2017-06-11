@@ -55,10 +55,18 @@ kubectl proxy --kubeconfig=configuration/kubectl/local/config
 open http://localhost:8001/ui
 ```
 
-### Concourse
+### Helm
 ```bash
 KUBECONFIG=configuration/kubectl/local/config helm init --client-only
-KUBECONFIG=configuration/kubectl/local/config helm install --name concourse stable/concourse --set persistence.enabled=false,postgresql.persistence.enabled=false,worker.replicas=1,worker.resources.requests.cpu="100m",worker.resources.requests.memory="128Mi"
+```
+
+### Concourse
+```bash
+KUBECONFIG=configuration/kubectl/local/config helm install --name concourse stable/concourse \
+--set persistence.enabled=false,postgresql.persistence.enabled=false,\
+worker.replicas=1,worker.resources.requests.cpu="100m",worker.resources.requests.memory="128Mi",\
+web.ingress.enabled=true,web.ingress.hosts={concourse.tungsten.local}
+
 
 export POD_NAME=$(kubectl get pods --namespace default -l "app=concourse-web" -o jsonpath="{.items[0].metadata.name}" --kubeconfig=configuration/kubectl/local/config)
 echo "Visit http://127.0.0.1:8080 to use Concourse"
@@ -70,6 +78,30 @@ echo "Login with the following credentials: concourse:concourse"
 ```bash
 KUBECONFIG=configuration/kubectl/local/config helm delete --purge concourse
 ```
+
+### RabbitMQ
+```bash
+KUBECONFIG=configuration/kubectl/local/config helm install --name rabbitmq stable/rabbitmq --set persistence.enabled=false
+```
+
+The RabbitMQ AMQP port 5672 can be accessed on the following DNS name from within your cluster: rabbitmq-rabbitmq.default.svc.cluster.local
+```bash
+echo Username      : user
+echo Password      : $(KUBECONFIG=configuration/kubectl/local/config kubectl get secret --namespace default rabbitmq-rabbitmq -o jsonpath="{.data.rabbitmq-password}" | base64 --decode)
+echo ErLang Cookie : $(KUBECONFIG=configuration/kubectl/local/config kubectl get secret --namespace default rabbitmq-rabbitmq -o jsonpath="{.data.rabbitmq-erlang-cookie}" | base64 --decode)
+```
+To Access the RabbitMQ Management interface:
+```bash
+export POD_NAME=$(KUBECONFIG=configuration/kubectl/local/config kubectl get pods --namespace default -l "app=rabbitmq-rabbitmq" -o jsonpath="{.items[0].metadata.name}")
+echo URL : http://127.0.0.1:15672
+KUBECONFIG=configuration/kubectl/local/config kubectl port-forward $POD_NAME 15672:15672
+```  
+
+### Concourse (Uninstall)
+```bash
+KUBECONFIG=configuration/kubectl/local/config helm delete --purge rabbitmq
+```
+
 # Links
 
 https://www.vagrantup.com/docs/provisioning/ansible_intro.html
