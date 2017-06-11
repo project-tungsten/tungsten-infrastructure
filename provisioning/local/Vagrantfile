@@ -16,16 +16,16 @@ servers = ServersList.new(
   subnet: $subnet,
   servers: [
     {
-      prefix: 'local-etcd-server',
-      instances: $etcd_instances,
-      tags: ['etcd'],
-      settings: { memory: 512, cpus: 1 }
-    },
-    {
       prefix: 'local-k8s-master-server',
       instances: $k8s_master_instances,
       tags: ['kube-master'],
       settings: { memory: 1536, cpus: 1 }
+    }
+    {
+      prefix: 'local-etcd-server',
+      instances: $etcd_instances,
+      tags: ['etcd'],
+      settings: { memory: 512, cpus: 1 }
     },
     {
       prefix: 'local-k8s-worker-server',
