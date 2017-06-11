@@ -113,6 +113,18 @@ KUBECONFIG=configuration/kubectl/local/config kubectl port-forward consul-consul
 KUBECONFIG=configuration/kubectl/local/config helm delete --purge consul
 ```
 
+## EFK
+
+As part of kargo playbooks, EFK is already available since efk_enabled option is enabled in configuration/tungsten-kubernetes/cluster.yml.
+
+Below are the steps to access kibana
+
+```bash
+KUBECONFIG=configuration/kubectl/local/config kubectl proxy
+open http://localhost:8001/api/v1/proxy/namespaces/kube-system/services/kibana-logging
+open http://localhost:8001/api/v1/proxy/namespaces/kube-system/services/kibana-logging/status
+```
+
 # Links
 
 https://www.vagrantup.com/docs/provisioning/ansible_intro.html
