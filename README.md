@@ -97,9 +97,20 @@ echo URL : http://127.0.0.1:15672
 KUBECONFIG=configuration/kubectl/local/config kubectl port-forward $POD_NAME 15672:15672
 ```  
 
-### Concourse (Uninstall)
+### RabbitMQ (Uninstall)
 ```bash
 KUBECONFIG=configuration/kubectl/local/config helm delete --purge rabbitmq
+```
+
+### Consul
+```bash
+KUBECONFIG=configuration/kubectl/local/config helm install --name consul ../../charts/stable/consul --set Replicas=1,Memory=256Mi,ui.enabled=true,uiService.enabled=true,uiService.type=ClusterIP,EnableStorage=false
+echo URL : http://127.0.0.1:8500
+KUBECONFIG=configuration/kubectl/local/config kubectl port-forward consul-consul-0 8500:8500
+```
+### Consul (Uninstall)
+```bash
+KUBECONFIG=configuration/kubectl/local/config helm delete --purge consul
 ```
 
 # Links
