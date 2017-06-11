@@ -2,7 +2,7 @@
 
 | Tool          | Version       | Notes  |
 | ------------- |:-------------:| -----: |
-| vagrant       | >= 1.9.5      | Older versions have a bug which causes where the private ip network interface does not get started - https://github.com/mitchellh/vagrant/pull/8148 |
+| vagrant       | >= 1.9.5      | Older versions have a bug where the private ip network interface does not get started - https://github.com/mitchellh/vagrant/pull/8148 |
 | ansible       | >= 2.3        |        |
 | kubectl       |               |        |
 | helm          | = v2.2.2      | https://kubernetes-helm.storage.googleapis.com/helm-v2.2.2-darwin-amd64.tar.gz       |
@@ -17,16 +17,25 @@ git submodule update --init --recursive
 # Run local cluster
 
 ```bash
-cd provisioning/local
-vagrant up --parallel
-vagrant status
+VAGRANT_CWD=provisioning/local vagrant up --parallel
+VAGRANT_CWD=provisioning/local vagrant status
 ```
 
 ```bash
-cd configuration/kargo
-ansible-playbook -i ../../provisioning/local/.vagrant/provisioners/ansible/inventory/vagrant_ansible_inventory cluster.yml -b --flush-cache -v
-cd ../../
-kubectl get pods --kubeconfig=configuration/kubectl/local/config  --all-namespaces
+ANSIBLE_CONFIG=configuration/kargo/ansible.cfg ansible-playbook -i provisioning/local/.vagrant/provisioners/ansible/inventory/vagrant_ansible_inventory configuration/tungsten-kubernetes/cluster.yml -b --flush-cache -v
+kubectl get pods --kubeconfig=configuration/kubectl/local/config --all-namespaces
+```
+
+# Run mini-local cluster
+
+```bash
+VAGRANT_CWD=provisioning/mini-local vagrant up 
+VAGRANT_CWD=provisioning/mini-local vagrant status
+```
+
+```bash
+ANSIBLE_CONFIG=configuration/kargo/ansible.cfg ansible-playbook -i provisioning/mini-local/.vagrant/provisioners/ansible/inventory/vagrant_ansible_inventory configuration/tungsten-kubernetes/cluster.yml -b --flush-cache -v
+kubectl get pods --kubeconfig=configuration/kubectl/local/config --all-namespaces
 ```
 
 ## Deploy Services
