@@ -51,16 +51,16 @@ ANSIBLE_CONFIG=configuration/kargo/ansible.cfg ansible-playbook -i configuration
 kubectl get pods --kubeconfig=configuration/kubectl/aws/config --all-namespaces
 ```
 
-## Deploy Services
+# Deploy Services
 
-### Nginx Ingress Controller
+## Nginx Ingress Controller
 
 ```bash
 kubectl apply -f configuration/services/nginx-ingress-controller/ --kubeconfig=configuration/kubectl/local/config
 curl http://172.168.10.103
 ```
 
-### Kubernetes Dashboard
+## Kubernetes Dashboard
 
 ```bash
 kubectl apply -f configuration/services/kubernetes-dashboard/ --kubeconfig=configuration/kubectl/local/config
@@ -68,12 +68,12 @@ kubectl proxy --kubeconfig=configuration/kubectl/local/config
 open http://localhost:8001/ui
 ```
 
-### Helm
+## Helm
 ```bash
 KUBECONFIG=configuration/kubectl/local/config helm init --client-only
 ```
 
-### Concourse
+## Concourse
 ```bash
 KUBECONFIG=configuration/kubectl/local/config helm install --name concourse stable/concourse \
 --set persistence.enabled=false,postgresql.persistence.enabled=false,\
@@ -87,12 +87,12 @@ kubectl port-forward --namespace default $POD_NAME 8080:8080 --kubeconfig=config
 echo "Login with the following credentials: concourse:concourse"
 ```
 
-### Concourse (Uninstall)
+## Concourse (Uninstall)
 ```bash
 KUBECONFIG=configuration/kubectl/local/config helm delete --purge concourse
 ```
 
-### RabbitMQ
+## RabbitMQ
 ```bash
 KUBECONFIG=configuration/kubectl/local/config helm install --name rabbitmq stable/rabbitmq --set persistence.enabled=false
 ```
@@ -110,18 +110,18 @@ echo URL : http://127.0.0.1:15672
 KUBECONFIG=configuration/kubectl/local/config kubectl port-forward $POD_NAME 15672:15672
 ```  
 
-### RabbitMQ (Uninstall)
+## RabbitMQ (Uninstall)
 ```bash
 KUBECONFIG=configuration/kubectl/local/config helm delete --purge rabbitmq
 ```
 
-### Consul
+## Consul
 ```bash
 KUBECONFIG=configuration/kubectl/local/config helm install --name consul ../../charts/stable/consul --set Replicas=1,Memory=256Mi,ui.enabled=true,uiService.enabled=true,uiService.type=ClusterIP,persistence.enabled=false
 echo URL : http://127.0.0.1:8500
 KUBECONFIG=configuration/kubectl/local/config kubectl port-forward consul-consul-0 8500:8500
 ```
-### Consul (Uninstall)
+## Consul (Uninstall)
 ```bash
 KUBECONFIG=configuration/kubectl/local/config helm delete --purge consul
 ```
@@ -136,6 +136,14 @@ Below are the steps to access kibana
 KUBECONFIG=configuration/kubectl/local/config kubectl proxy
 open http://localhost:8001/api/v1/proxy/namespaces/kube-system/services/kibana-logging
 open http://localhost:8001/api/v1/proxy/namespaces/kube-system/services/kibana-logging/status
+```
+
+# Ansible Vault
+
+How to encrypt string
+
+```bash
+ansible-vault encrypt_string my-password --ask-vault-pass
 ```
 
 # Links
