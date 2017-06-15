@@ -20,8 +20,7 @@ class AnsibleServersConfigurationDecider
         'download_run_once' => 'False',
         # Override the default 'calico' with flannel.
         # inventory/group_vars/k8s-cluster.yml
-        'kube_network_plugin' => 'flannel',
-        'helm_enabled' => true
+        'kube_network_plugin' => 'flannel'
         # 'apiserver_custom_flags' => '--authorization-mode=RBAC' # https://kubernetes.io/docs/admin/authorization/rbac/
       }
     end

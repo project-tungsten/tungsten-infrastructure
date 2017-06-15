@@ -38,6 +38,19 @@ ANSIBLE_CONFIG=configuration/kargo/ansible.cfg ansible-playbook -i provisioning/
 kubectl get pods --kubeconfig=configuration/kubectl/local/config --all-namespaces
 ```
 
+# RUN AWS Cluster
+
+```bash
+cd provisioning/aws
+TF_VAR_ssh_public_key_path=tungsten_aws_rsa.pub TF_VAR_aws_access_key=<key> TF_VAR_aws_secret_key=<secret> terraform plan
+```
+
+```bash
+unset ANSIBLE_VAULT_PASSWORD_FILE
+ANSIBLE_CONFIG=configuration/kargo/ansible.cfg ansible-playbook -i configuration/tungsten-kubernetes/inventories/aws/hosts.rb configuration/tungsten-kubernetes/cluster.yml -b --flush-cache -v --ask-vault-pass
+kubectl get pods --kubeconfig=configuration/kubectl/aws/config --all-namespaces
+```
+
 ## Deploy Services
 
 ### Nginx Ingress Controller
