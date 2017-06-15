@@ -82,3 +82,15 @@ resource "aws_instance" "tungsten-k8s-worker-server-2" {
     "kargo-kube-node" = "true"
   }
 }
+
+resource "aws_route53_zone" "primary" {
+  name = "project-tungsten.com"
+}
+
+resource "aws_route53_record" "k8s-api" {
+  zone_id = "${aws_route53_zone.primary.zone_id}"
+  name    = "k8s-api.project-tungsten.com"
+  type    = "A"
+  ttl     = "300"
+  records = ["${aws_instance.tungsten-k8s-master-server-1.public_ip}"]
+}
