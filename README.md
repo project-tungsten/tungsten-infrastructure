@@ -138,6 +138,12 @@ open http://localhost:8001/api/v1/proxy/namespaces/kube-system/services/kibana-l
 open http://localhost:8001/api/v1/proxy/namespaces/kube-system/services/kibana-logging/status
 ```
 
+## Prometheus
+
+```bash
+KUBECONFIG=configuration/kubectl/local/config helm install --name prometheus stable/prometheus --set alertmanager.persistentVolume.enabled=false,server.persistentVolume.enabled=false
+```
+
 # Ansible Vault
 
 How to encrypt string
