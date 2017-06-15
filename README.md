@@ -144,6 +144,22 @@ open http://localhost:8001/api/v1/proxy/namespaces/kube-system/services/kibana-l
 KUBECONFIG=configuration/kubectl/local/config helm install --name prometheus stable/prometheus --set alertmanager.persistentVolume.enabled=false,server.persistentVolume.enabled=false
 ```
 
+## Prometheus (Uninstall)
+```bash
+KUBECONFIG=configuration/kubectl/local/config helm delete --purge prometheus
+```
+
+## Grafana
+
+```bash
+KUBECONFIG=configuration/kubectl/local/config helm install --name grafana stable/grafana --set server.persistentVolume.enabled=false,server.ingress.enabled=true,server.ingress.hosts={grafana.project-tungsten.com},server.adminPassword=changeme
+```
+
+## Grafana (Uninstall)
+```bash
+KUBECONFIG=configuration/kubectl/local/config helm delete --purge grafana
+```
+
 # Ansible Vault
 
 How to encrypt string
